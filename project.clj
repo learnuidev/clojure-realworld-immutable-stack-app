@@ -5,7 +5,8 @@
                       :url "https://www.eclipse.org/legal/epl-2.0/"}
             :dependencies [[org.clojure/clojure "1.10.0"]
                            [io.replikativ/datahike "0.3.1"]
-                           [io.replikativ/datahike-postgres "0.1.0"]]
+                           [io.replikativ/datahike-postgres "0.1.0"]
+                           [mount "0.1.16"]]
             :main ^:skip-aot conduit.core
             :target-path "target/%s"
             :profiles {:uberjar {:aot :all}})
