@@ -26,17 +26,42 @@
 
 ;; ;; The first transaction will be the schema we are using:
 (d/transact conn schema)
-;; (u/schema conn)
+#_(u/schema conn)
 
 ;; Seed Data
-(defn seed [conn]
+(defn seed-user [conn]
   (d/transact conn [{:user/username "john.doe" :user/email "john.doe@gmail.com"};;
                     {:user/username "jane.doe" :user/email "jane.doe@gmail.com"}]));;
-#_(seed conn)
+#_(seed-user conn)
 
-;; Search the data
-(d/q '[:find ?e ?n ?a
+(defn seed-articles []
+  (d/transact conn [{:article/title "How to train your dragon"
+                     :article/description "Ever wonder how?"
+                     :article/author [:user/email "john.doe@gmail.com"]}]))
+
+#_(seed-articles)
+
+;; Fetch username and email of all the users
+(d/q '[:find ?e ?username ?email
        :where
-       [?e :user/username ?n]
-       [?e :user/email ?a]]
+       [?e :user/username ?username]
+       [?e :user/email ?email]]
      @conn)
+
+;; Fetch all the titles articles by john.doe@gmail.com
+(d/q '[:find ?title
+       :where
+       [?a :article/title ?title]
+       [?a :article/author [:user/email "john.doe@gmail.com"]]]
+     @conn)
+
+;;
+(defn articles-by-user [conn pattern email]
+  (d/q '[:find (pull ?a pattern) .
+         :in $ pattern ?email
+         :where
+         [?a :article/title ?title]
+         [?a :article/author ?email]]
+       @conn pattern [:user/email email]))
+
+(articles-by-user conn '[*] "john.doe@gmail.com")
