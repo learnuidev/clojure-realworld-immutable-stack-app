@@ -21,7 +21,7 @@
          :in $ ?article-id pattern
          :where [?aid :article/id ?article-id]]
        @conn (u/string->uuid article-id) pattern))
-#_(fetch "ad50d05f-c958-45c2-8492-c17298628909" '[* {:article/author [*]}])
+#_(fetch "3eaead6b-d2a9-4483-89cd-d28f14eacf5a" '[* {:article/author [*]}])
 
 (defn fetch-by-user
   "Fetch a single article belonging to a user"

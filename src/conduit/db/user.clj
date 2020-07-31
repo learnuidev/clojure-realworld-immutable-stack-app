@@ -5,48 +5,48 @@
 
 (defn browse
   "Browse List of users"
-  [pattern]
+  [conn pattern]
   (d/q '[:find [(pull ?uid pattern) ...]
          :in $ pattern
          :where [?uid :user/email ?email]]
        @conn pattern))
-#_(browse '[*])
+#_(browse conn '[*])
 ;; ===
 
 (defn fetch
   "Fetch a single user by email"
-  [email pattern]
+  [conn email pattern]
   (d/q '[:find (pull ?uid pattern) .
          :in $ pattern ?email
          :where [?uid :user/email ?email]]
        @conn pattern email))
-#_(fetch "john.doe@gmail.com" '[*])
+#_(fetch conn "john.doe@gmail.com" '[*])
 ;; ===
 
 (defn edit!
   "Edit a user"
-  [email params]
+  [conn email params]
   (let [input (merge {:user/email email} params)
         _ (d/transact conn [input])]
-    (fetch email '[*])))
-#_(edit! "john.doe@gmail.com" {:user/username "johnny.doe"})
+    (fetch conn email '[*])))
+#_(edit! conn "john.doe@gmail.com" {:user/username "johnny.doe"})
 ;; ===
 
 
 (defn add!
   "Add a new user"
-  [username email]
+  [conn {:keys [username email]}]
   (d/transact conn [{:user/username username :user/email email}]))
 #_(add! "jane" "jane.doe@gmail.com")
 ;; ===
 
 (defn delete!
   "Delete a user by email"
-  [email]
-  (when-let [user (fetch email '[*])]
+  [conn email]
+  (when-let [user (fetch conn email '[*])]
     (d/transact conn {:tx-data [[:db/retractEntity [:user/email email]]]})
     user))
-#_(delete! "john.doe@gmail.com")
+#_(delete! conn "john.doe@gmail.com")
 ;; ===
 
 (defn follow!
