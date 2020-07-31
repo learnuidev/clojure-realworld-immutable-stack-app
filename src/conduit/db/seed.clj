@@ -1,6 +1,7 @@
 (ns conduit.db.seed
   (:require [datahike.api :as d]
-            [datahike-postgres.core]))
+            [datahike-postgres.core]
+            [conduit.db.utils :as u]))
 
 ;; Seed Data
 (defn seed-user [conn]
@@ -11,10 +12,12 @@
 
 (defn seed-articles [conn]
   (d/transact conn [{:article/title "How to train your dragon"
+                     :article/id (u/uuid)
                      :article/description "Ever wonder how?"
                      :article/author [:user/email "john.doe@gmail.com"]}
                     {:article/title "Beauty and the Beast"
                      :article/description "covid19"
+                     :article/id (u/uuid)
                      :article/author [:user/email "jane.doe@gmail.com"]
                      :article/comments [{:comment/body "this is so cool"
                                          :comment/author [:user/email "jane.doe@gmail.com"]}]}]))

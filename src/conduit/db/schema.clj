@@ -44,6 +44,11 @@
                 :db/valueType :db.type/string
                 :db/cardinality :db.cardinality/one
                 :db/doc "Articles description"}
+               {:db/ident :article/id
+                :db/valueType :db.type/uuid
+                :db/unique :db.unique/identity
+                :db/cardinality :db.cardinality/one
+                :db/doc "Articles public ID"}
                {:db/ident :article/author
                 :db/valueType :db.type/ref
                 :db/cardinality :db.cardinality/one
