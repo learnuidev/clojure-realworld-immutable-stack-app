@@ -5,7 +5,8 @@
 ;; Seed Data
 (defn seed-user [conn]
   (d/transact conn [{:user/username "john.doe" :user/email "john.doe@gmail.com"};;
-                    {:user/username "jane.doe" :user/email "jane.doe@gmail.com"}]));;
+                    {:user/username "jane.doe" :user/email "jane.doe@gmail.com"}
+                    {:user/username "mike.fro" :user/email "mike@gmail.com"}]));;
 
 
 (defn seed-articles [conn]
@@ -14,7 +15,9 @@
                      :article/author [:user/email "john.doe@gmail.com"]}
                     {:article/title "Beauty and the Beast"
                      :article/description "covid19"
-                     :article/author [:user/email "john.doe@gmail.com"]}]))
+                     :article/author [:user/email "john.doe@gmail.com"]
+                     :article/comments [{:comment/body "this is so cool"
+                                         :comment/author [:user/email "jane.doe@gmail.com"]}]}]))
 
 (defn seed [conn]
   (seed-user conn)
