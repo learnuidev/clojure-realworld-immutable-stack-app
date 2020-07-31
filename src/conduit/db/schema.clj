@@ -62,6 +62,11 @@
                 :db/valueType :db.type/string
                 :db/cardinality :db.cardinality/one
                 :db/doc "Comment's body"}
+               {:db/ident :comment/id
+                :db/valueType :db.type/uuid
+                :db/unique :db.unique/identity
+                :db/cardinality :db.cardinality/one
+                :db/doc "Comments public ID"}
                {:db/ident :comment/author
                 :db/valueType :db.type/ref
                 :db/cardinality :db.cardinality/one
