@@ -17,3 +17,13 @@
 (defstate conn
           :start (do (u/create-db config) (d/connect config))
           :stop (d/release conn))
+
+; 
+; (def db (d/db conn))
+; (def hist (d/history db))
+;
+; (d/q '[:find ?aid ?tx ?title ?added
+;        :where [?aid :article/title ?title ?tx ?added]]
+;     hist)
+;
+;
