@@ -1,6 +1,7 @@
 (ns conduit.db.user
   (:require [conduit.db.core :refer [conn]]
-            [datahike.api :as d]))
+            [datahike.api :as d]
+            [conduit.db.utils :as u]))
 
 (defn browse
   "Browse List of users"
@@ -75,3 +76,18 @@
        @conn pattern email))
 #_(followed-by-user '[*] "john.doe@gmail.com")
 ;; ===
+
+
+(defn favourite!
+  "Favourite an article"
+  [email article-id]
+  (d/transact conn [{:user/email email
+                     :user/favourites [{:article/id (u/string->uuid article-id)}]}]))
+#_(favourite! "john.doe@gmail.com" "574ae17e-676f-4822-a902-937f8a6841c4")
+;; ===
+
+(defn unfavourite!
+  "Un favourite an article"
+  [email article-id]
+  (d/transact conn {:tx-data [[:db/retract [:user/email email] :user/favourites [:article/id (u/string->uuid article-id)]]]}))
+#_(unfavourite! "john.doe@gmail.com" "574ae17e-676f-4822-a902-937f8a6841c4")

@@ -22,16 +22,29 @@
          :where [?aid :article/id ?article-id]]
        @conn (u/string->uuid article-id) pattern))
 #_(fetch "ad50d05f-c958-45c2-8492-c17298628909" '[* {:article/author [*]}])
+
+(defn fetch-by-user
+  "Fetch a single article belonging to a user"
+  [aid email]
+  (d/q '[:find (pull ?a [*]) .
+         :in $ ?aid ?email
+         :where [?a :article/id ?aid]
+         [?a :article/author ?author]
+         [?author :user/email ?email]]
+       @conn (u/string->uuid aid) email))
+#_(fetch-by-user "574ae17e-676f-4822-a902-937f8a6841c4" "jane.doe@gmail.com")
 ;; ===
 
 (defn edit!
   "Edit a article"
-  [aid params]
-  (let [input (merge {:article/id (u/string->uuid aid)} params)
-        _ (d/transact conn [input])]
-    (fetch aid '[*])))
-#_(edit! "ad50d05f-c958-45c2-8492-c17298628909"
-         {:article/title "Tales Pin"})
+  [{:keys [aid email params]}]
+  (when (fetch-by-user aid email)
+    (let [input (merge {:article/id (u/string->uuid aid)} params)
+          _ (d/transact conn [input])]
+      (fetch aid '[*]))))
+#_(edit! {:aid "574ae17e-676f-4822-a902-937f8a6841c4"
+          :email "jane.doe@gmail.com"
+          :params {:article/title "Tales Pin"}})
 ;; ===
 
 (defn add!
