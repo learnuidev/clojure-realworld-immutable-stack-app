@@ -1,4 +1,4 @@
-(ns conduit.db.core
+(ns user
   (:require [mount.core :as mount]
             [datahike.api :as d]
             [conduit.db.core :refer [config conn]]

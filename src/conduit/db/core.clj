@@ -18,7 +18,7 @@
           :start (do (u/create-db config) (d/connect config))
           :stop (d/release conn))
 
-; 
+;
 ; (def db (d/db conn))
 ; (def hist (d/history db))
 ;
