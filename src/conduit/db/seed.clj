@@ -15,7 +15,7 @@
                      :article/author [:user/email "john.doe@gmail.com"]}
                     {:article/title "Beauty and the Beast"
                      :article/description "covid19"
-                     :article/author [:user/email "john.doe@gmail.com"]
+                     :article/author [:user/email "jane.doe@gmail.com"]
                      :article/comments [{:comment/body "this is so cool"
                                          :comment/author [:user/email "jane.doe@gmail.com"]}]}]))
 

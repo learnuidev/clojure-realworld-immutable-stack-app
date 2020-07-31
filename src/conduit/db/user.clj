@@ -31,14 +31,14 @@
 #_(edit! "john.doe@gmail.com" {:user/username "johnny.doe"})
 ;; ===
 
-;; Create/Add user
+
 (defn add!
   "Add a new user"
   [username email]
   (d/transact conn [{:user/username username :user/email email}]))
 #_(add! "jane" "jane.doe@gmail.com")
+;; ===
 
-;; Delete a user
 (defn delete!
   "Delete a user by email"
   [email]
@@ -46,4 +46,32 @@
     (d/transact conn {:tx-data [[:db/retractEntity [:user/email email]]]})
     user))
 #_(delete! "john.doe@gmail.com")
-;;
+;; ===
+
+(defn follow!
+  "Follow a user"
+  [email following-email]
+  (d/transact conn [{:user/email email
+                     :user/following [{:user/email following-email}]}]))
+#_(follow! "john.doe@gmail.com" "mike@gmail.com")
+;; ===
+
+(defn unfollow!
+  "Unfollow a user"
+  [email following-email]
+  (d/transact conn {:tx-data [[:db/retract [:user/email email] :user/following [:user/email following-email]]]}))
+#_(d/entity @conn [:user/email "mike@gmail.com"])
+#_(unfollow! "john.doe@gmail.com" "mike@gmail.com")
+;; ===
+
+(defn followed-by-user
+  "Find all the users followed by User"
+  [pattern email]
+  (d/q '[:find [(pull ?uf pattern) ...]
+         :in $ pattern ?email
+         :where
+         [?u :user/email ?email]
+         [?u :user/following ?uf]]
+       @conn pattern email))
+#_(followed-by-user '[*] "john.doe@gmail.com")
+;; ===
