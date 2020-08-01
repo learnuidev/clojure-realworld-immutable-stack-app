@@ -6,10 +6,10 @@
             [ring.adapter.jetty :as jetty]
             [ring.middleware.reload :refer [wrap-reload]]
             [conduit.middlewares :refer [wrap-cors]]
-            [conduit.handler :refer [handler]]))
+            [conduit.routes :refer [app]]))
 
 (defn -main []
   (jetty/run-jetty
-   (-> #'handler wrap-reload wrap-cors)
+   (-> #'app wrap-reload wrap-cors)
    {:port 3000
     :join? false}))

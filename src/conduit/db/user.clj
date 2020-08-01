@@ -13,14 +13,32 @@
 #_(browse conn '[*])
 ;; ===
 
-(defn fetch
+(defn fetch-by-username
+  "Fetch a single user by username"
+  [conn username pattern]
+  (d/q '[:find (pull ?uid pattern) .
+         :in $ pattern ?username
+         :where [?uid :user/username ?username]]
+       @conn pattern username))
+#_(fetch-by-username conn "john.doe" '[*])
+
+(defn fetch-by-email
   "Fetch a single user by email"
   [conn email pattern]
   (d/q '[:find (pull ?uid pattern) .
          :in $ pattern ?email
          :where [?uid :user/email ?email]]
        @conn pattern email))
-#_(fetch conn "john.doe@gmail.com" '[*])
+#_(fetch-by-email conn "john.doe@gmail.com" '[*])
+
+(defn fetch
+  "Fetch a single user by email or username"
+  [conn {:keys [email username]} pattern]
+  (if-let [user (fetch-by-username conn username pattern)]
+    user
+    (when-let [user (fetch-by-email conn email pattern)]
+      user)))
+#_(fetch conn {:email "john.doe@gmail.com"} '[*])
 ;; ===
 
 (defn edit!
@@ -28,22 +46,24 @@
   [conn email params]
   (let [input (merge {:user/email email} params)
         _ (d/transact conn [input])]
-    (fetch conn email '[*])))
+    (fetch conn {:email email} '[*])))
 #_(edit! conn "john.doe@gmail.com" {:user/username "johnny.doe"})
 ;; ===
 
 
 (defn add!
   "Add a new user"
-  [conn {:keys [username email]}]
-  (d/transact conn [{:user/username username :user/email email}]))
+  [conn {:keys [username email hash]}]
+  (d/transact conn [{:user/username username
+                     :user/email email
+                     :user/hash hash}]))
 #_(add! "jane" "jane.doe@gmail.com")
 ;; ===
 
 (defn delete!
   "Delete a user by email"
   [conn email]
-  (when-let [user (fetch conn email '[*])]
+  (when-let [user (fetch conn {:email email} '[*])]
     (d/transact conn {:tx-data [[:db/retractEntity [:user/email email]]]})
     user))
 #_(delete! conn "john.doe@gmail.com")

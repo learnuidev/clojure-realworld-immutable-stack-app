@@ -1,19 +1,19 @@
 (ns conduit.handler
-  (:require [reitit.ring :as reitit]
-            [ring.util.http-response :as response]
-            [conduit.routes :refer [routes]]))
+  (:require [ring.util.http-response :as response]
+            [conduit.db.core :refer [conn]]
+            [conduit.db.user :as user]))
 
-(def handler
-  (reitit/routes
-   (reitit/ring-handler
-    (reitit/router routes))
-   (reitit/create-resource-handler
-    {:path "/"
-     :root "build"}) ;; default is "public" inside resources folder
-   (reitit/create-default-handler
-    {:not-found
-     (constantly (response/not-found "404 - Page not found"))
-     :method-not-allowed
-     (constantly (response/method-not-allowed "405 - Not allowed"))
-     :not-acceptable
-     (constantly (response/not-acceptable "406 - Not acceptable"))})))
+;; (user/fetch conn "john.doe@gmail.com" '[*])
+
+(defn login [{{:keys [username password]} :body-params}]
+  (response/ok {:response {:username username
+                           :password password}}))
+
+;;
+(defn register [{{:keys [username password email]} :body-params}]
+  (if (user/fetch conn {:email email :username username} '[*])
+    (response/conflict {:message "Registration failed! User already exists"})
+    (let [_new-user (user/add! conn {:username username
+                                     :email email
+                                     :hash password})] ;; TODO: Convert to hash
+      (response/ok {:message "Registration successful! Please login in"}))))

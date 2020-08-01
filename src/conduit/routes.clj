@@ -1,6 +1,8 @@
 (ns conduit.routes
   (:require [ring.util.http-response :as response]
-            [conduit.middlewares :refer [wrap-formats wrap-authorization]]))
+            [conduit.middlewares :refer [wrap-formats wrap-authorization]]
+            [reitit.ring :as reitit]
+            [conduit.handler :as handler]))
 
 (defn response-handler [request-map]
   (response/ok
@@ -18,8 +20,8 @@
 
 (def routes [["/api" {:middleware [wrap-formats]}
               [""
-               ["/users/login"    {:post response}]
-               ["/users/register" {:post response}]
+               ["/login"    {:post handler/login}]
+               ["/register" {:post handler/register}]
                ["/profiles/:username" {:get response}]
                ["/articles" {:get response
                              :post {:middleware [wrap-authorization]
@@ -40,3 +42,18 @@
                ["/articles/:slug"
                 ["/favourite" {:post response :delete response}]
                 ["/comments/:id" {:delete response}]]]]])
+
+(def app
+  (reitit/routes
+   (reitit/ring-handler
+    (reitit/router routes))
+   (reitit/create-resource-handler
+    {:path "/"
+     :root "build"}) ;; default is "public" inside resources folder
+   (reitit/create-default-handler
+    {:not-found
+     (constantly (response/not-found "404 - Page not found"))
+     :method-not-allowed
+     (constantly (response/method-not-allowed "405 - Not allowed"))
+     :not-acceptable
+     (constantly (response/not-acceptable "406 - Not acceptable"))})))
