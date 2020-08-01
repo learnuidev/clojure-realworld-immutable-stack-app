@@ -3,14 +3,23 @@
             [datahike.api :as d]
             [conduit.db.utils :as u]))
 
+; (def db (d/db conn))
+; (def hist (d/history db))
+;
+; (d/q '[:find [?title ...]
+;        :in $ ?article-id
+;        :where [?aid :article/id ?article-id ?tx ?op]
+;               [?aid :article/title ?title]]
+;     hist (u/string->uuid "3eaead6b-d2a9-4483-89cd-d28f14eacf5a"))
+
 (defn browse
   "Browse List of articles"
-  [pattern]
+  [conn pattern]
   (d/q '[:find [(pull ?aid pattern) ...]
          :in $ pattern
          :where [?aid :article/title ?title]]
        @conn pattern))
-#_(browse '[*])
+#_(browse conn '[*])
 ;; ===
 
 
@@ -32,7 +41,7 @@
          [?a :article/author ?author]
          [?author :user/email ?email]]
        @conn (u/string->uuid aid) email))
-#_(fetch-by-user "574ae17e-676f-4822-a902-937f8a6841c4" "jane.doe@gmail.com")
+#_(fetch-by-user "3eaead6b-d2a9-4483-89cd-d28f14eacf5a" "john.doe@gmail.com")
 ;; ===
 
 (defn edit!
@@ -42,9 +51,9 @@
     (let [input (merge {:article/id (u/string->uuid aid)} params)
           _ (d/transact conn [input])]
       (fetch aid '[*]))))
-#_(edit! {:aid "574ae17e-676f-4822-a902-937f8a6841c4"
-          :email "jane.doe@gmail.com"
-          :params {:article/title "Tales Pin"}})
+#_(edit! {:aid "3eaead6b-d2a9-4483-89cd-d28f14eacf5a"
+          :email "john.doe@gmail.com"
+          :params {:article/title "How not to fly a dragon"}})
 ;; ===
 
 (defn add!
