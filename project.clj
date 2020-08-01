@@ -6,7 +6,14 @@
             :dependencies [[org.clojure/clojure "1.10.0"]
                            [io.replikativ/datahike "0.3.1"]
                            [io.replikativ/datahike-postgres "0.1.0"]
-                           [mount "0.1.16"]]
+                           [mount "0.1.16"]
+                           [ring "1.8.1"]
+                           ;; Routing
+                           [metosin/muuntaja "0.6.7"]
+                           [metosin/reitit "0.5.5"]
+                           [metosin/ring-http-response "0.9.1"]
+                           ;; Template system
+                           [selmer "1.12.28"]]
             :main ^:skip-aot conduit.core
             :target-path "target/%s"
             :profiles {:uberjar {:aot :all}})
