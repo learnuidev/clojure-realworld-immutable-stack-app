@@ -34,8 +34,9 @@
         (response/ok {:message "Registration successful! Please login in"})))))
 
 ;; Articles - BROWSE
-(defn articles-browse [_req]
-  (let [articles (article/browse conn)]
+(defn articles-browse [{{:strs [pagination-index]} :query-params}]
+  (let [index (when pagination-index (read-string pagination-index))
+        articles (if index (article/browse conn index) (article/browse conn))]
         ; articles (article/browse conn '[:article/title
         ;                                 :article/description
         ;                                 :article/id

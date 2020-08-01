@@ -1,7 +1,12 @@
 (ns conduit.db.article
   (:require [conduit.db.core :refer [conn]]
             [datahike.api :as d]
+            [datahike.db :as db]
+            [clj-time.core :as t]
+            [clj-time.coerce :as c]
             [conduit.db.utils :as u]))
+
+; (c/to-long (t/now))
 
 ; (def db (d/db conn))
 ; (def hist (d/history db))
@@ -15,25 +20,28 @@
 ;;
 (defn browse
   "Browse List of articles"
-  [conn]
-  (->> (d/q '[:find ?tx ?id ?title ?description ?email ?username
-              :in $
-              :where
-              [?aid :article/title ?title ?tx]
-              [?aid :article/id ?id]
-              [?aid :article/description ?description ?tx]
-              [?aid :article/author ?uid]
-              [?uid :user/email ?email]
-              [?uid :user/username ?username]]
-            @conn)
-       (sort-by first #(compare %2 %1))
-       (map (fn [[tx id title description email username]]
-              {:article/last-updated tx
-               :article/id id
-               :article/title title
-               :article/description description
-               :article/author {:user/email email
-                                :user/username username}}))))
+  ([conn] (browse conn (c/to-long (t/now))))
+  ([conn index]
+   (->> (d/q '[:find ?tx ?id ?title ?description ?email ?username
+               :in $ ?index
+               :where
+               [?aid :article/title ?title ?tx]
+               [(> ?index ?tx)]
+               [?aid :article/id ?id]
+               [?aid :article/description ?description ?tx]
+               [?aid :article/author ?uid]
+               [?uid :user/email ?email]
+               [?uid :user/username ?username]]
+             @conn index)
+        (sort-by first #(compare %2 %1))
+        (take 50)
+        (map (fn [[tx id title description email username]]
+               {:article/last-updated tx
+                :article/id id
+                :article/title title
+                :article/description description
+                :article/author {:user/email email
+                                 :user/username username}})))))
 
 ; (defn browse
 ;   "Browse List of articles"

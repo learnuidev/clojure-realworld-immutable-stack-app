@@ -2,6 +2,7 @@
   (:require [ring.util.http-response :as response]
             [conduit.middlewares :refer [wrap-formats wrap-authorization wrap-auth]]
             [reitit.ring :as reitit]
+            [reitit.ring.middleware.parameters :as parameters]
             [conduit.handler :as handler]))
 
 (defn response-handler [request-map]
@@ -18,7 +19,8 @@
 (defn response [_req]
   (response/ok {:response "TODO"}))
 
-(def routes [["/api" {:middleware [wrap-formats]}
+(def routes [["/api" {:middleware [wrap-formats
+                                   parameters/parameters-middleware]}
               [""
                ["/login"    {:post handler/login}]
                ["/register" {:post handler/register}]
