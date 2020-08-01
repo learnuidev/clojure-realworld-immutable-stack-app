@@ -69,6 +69,7 @@
   "Add a new user"
   [conn {:keys [username email hash token]}]
   (d/transact conn [{:user/username username
+                     :user/id (u/uuid)
                      :user/email email
                      :user/hash hash
                      :user/token token}]))

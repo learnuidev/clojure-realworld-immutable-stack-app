@@ -36,10 +36,10 @@
                                  :delete {:middleware [wrap-auth ;; DONE
                                                        wrap-authorization]
                                           :handler handler/articles-delete!}}]
-               ["/articles/:id/comments" {:get response
-                                          :post {:middleware [wrap-auth
+               ["/articles/:id/comments" {:get handler/comments-browse ;; DONE
+                                          :post {:middleware [wrap-auth ;; DONE
                                                               wrap-authorization]
-                                                 :handler response}}]
+                                                 :handler handler/comments-add}}]
                ["/tags" {:get response}]]
               ["" {:middleware [wrap-auth
                                 wrap-authorization]}

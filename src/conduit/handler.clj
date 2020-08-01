@@ -3,6 +3,7 @@
             [conduit.db.core :refer [conn]]
             [conduit.db.user :as user]
             [conduit.db.article :as article]
+            [conduit.db.comment :as comment]
             [conduit.utils :as utils]))
 ;;
 (defn post-handler [req]
@@ -95,3 +96,15 @@
         (response/not-found {:message "Article not found"})))
     (catch Exception e
       (response/bad-request {:message "Something went wrong! Please try again"}))))
+
+;; COMMENTS
+;; == Browse ==
+(defn comments-browse [{{:keys [id]} :path-params}]
+  (response/ok (comment/browse conn id)))
+
+;; == Add ==
+(defn comments-add [{{:keys [id]} :path-params
+                     {:keys [body]} :body-params
+                     {:user/keys [email]} :auth}]
+  (let [new-comment (comment/add! conn id {:body body :email email})]
+    (response/ok {:comment new-comment})))
