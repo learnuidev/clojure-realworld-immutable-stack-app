@@ -56,7 +56,7 @@
 
 (defn fetch
   "Fetch a single article by ID"
-  [article-id pattern]
+  [conn article-id pattern]
   (d/q '[:find (pull ?aid pattern) .
          :in $ ?article-id pattern
          :where [?aid :article/id ?article-id]]
@@ -77,11 +77,11 @@
 
 (defn edit!
   "Edit a article"
-  [{:keys [aid email params]}]
+  [conn {:keys [aid email params]}]
   (when (fetch-by-user aid email)
     (let [input (merge {:article/id (u/string->uuid aid)} params)
           _ (d/transact conn [input])]
-      (fetch aid '[*]))))
+      (fetch conn aid '[*]))))
 #_(edit! {:aid "3eaead6b-d2a9-4483-89cd-d28f14eacf5a"
           :email "john.doe@gmail.com"
           :params {:article/title "How not to fly a dragon"}})
@@ -95,7 +95,7 @@
                        :article/id id
                        :article/description description
                        :article/author [:user/email author]}])
-    (fetch id '[* {:article/author [:user/email :user/username]}])))
+    (fetch conn id '[* {:article/author [:user/email :user/username]}])))
 #_(add! {:author "jane.doe@gmail.com"
          :title "Programming Clojure"
          :description "Learn how to program in Clojure"})
@@ -104,7 +104,7 @@
 (defn delete!
   "Delete an article by ID"
   [aid]
-  (when-let [article (fetch aid '[*])]
+  (when-let [article (fetch conn aid '[*])]
     (d/transact conn {:tx-data [[:db/retractEntity [:article/id (u/string->uuid aid)]]]})
     article))
 ;; ===

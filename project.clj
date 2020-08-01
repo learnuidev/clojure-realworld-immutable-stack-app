@@ -17,7 +17,9 @@
                            ;; Validation lib
                            [funcool/struct "1.4.0"]
                            ;; Time Lib
-                           [clj-time "0.15.2"]]
+                           [clj-time "0.15.2"]
+                           ;; Logger
+                           [ring-logger "1.0.1"]]
             :main ^:skip-aot conduit.core
             :target-path "target/%s"
             :profiles {:uberjar {:aot :all}})

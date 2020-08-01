@@ -33,16 +33,32 @@
                                        :hash (utils/encrypt-password password)})]
         (response/ok {:message "Registration successful! Please login in"})))))
 
-;; Articles - BROWSE
+;; == Articles ==
+;; BROWSE
+; (defn articles-browse [_req]
+;   (let [articles (article/browse conn '[:article/title
+;                                         :article/description
+;                                         :article/id
+;                                         {:article/author [:user/username :user/email]}])]
+;     (response/ok {:articles articles})))
 (defn articles-browse [{{:strs [pagination-index]} :query-params}]
   (let [index (when pagination-index (read-string pagination-index))
         articles (if index (article/browse conn index) (article/browse conn))]
-        ; articles (article/browse conn '[:article/title
-        ;                                 :article/description
-        ;                                 :article/id
-        ;                                 {:article/author [:user/username :user/email]}])]
     (response/ok {:articles articles})))
 
+;; READ
+(defn articles-read [{{:keys [id]} :path-params}]
+  (try
+    (let [article (article/fetch conn id '[* {:article/author [:user/username
+                                                               :user/email]
+                                              :article/comments [* {:comment/author [*]}]}])]
+      (response/ok {:article article}))
+    (catch Exception e
+      (response/not-found {:message "Article not found! Please try another link"}))))
+
+;; ARTICLE EDIT
+
+;; ADD
 (defn articles-add! [{{:user/keys [email]} :auth
                       {:keys [title description]} :body-params}]
   (let [new-article (article/add! {:title title

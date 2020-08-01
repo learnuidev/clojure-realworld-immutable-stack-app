@@ -6,6 +6,11 @@
              :db/unique :db.unique/identity
              :db/cardinality :db.cardinality/one
              :db/doc "Users username"}
+            {:db/ident :user/id
+             :db/valueType :db.type/uuid
+             :db/unique :db.unique/identity
+             :db/cardinality :db.cardinality/one
+             :db/doc "Users ID"}
             {:db/ident :user/email
              :db/valueType :db.type/string
              :db/unique :db.unique/identity

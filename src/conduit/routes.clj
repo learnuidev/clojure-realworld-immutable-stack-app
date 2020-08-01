@@ -22,18 +22,18 @@
 (def routes [["/api" {:middleware [wrap-formats
                                    parameters/parameters-middleware]}
               [""
-               ["/login"    {:post handler/login}]
-               ["/register" {:post handler/register}]
+               ["/login"    {:post handler/login}]      ;; DONE
+               ["/register" {:post handler/register}]   ;; DONE
                ["/profiles/:username" {:get response}]
-               ["/articles" {:get handler/articles-browse
-                             :post {:middleware [wrap-auth
+               ["/articles" {:get handler/articles-browse  ;; DONE
+                             :post {:middleware [wrap-auth ;; DONE
                                                  wrap-authorization]
                                     :handler handler/articles-add!}}]
-               ["/articles/:slug" {:get response
-                                   :put {:middleware [wrap-authorization]
-                                         :handler response}
-                                   :delete {:middleware [wrap-authorization]
-                                            :handler response}}]
+               ["/articles/:id" {:get handler/articles-read
+                                 :put {:middleware [wrap-authorization]
+                                       :handler response}
+                                 :delete {:middleware [wrap-authorization]
+                                          :handler response}}]
                ["/articles/:slug/comments" {:get response
                                             :post {:middleware [wrap-authorization]
                                                    :handler response}}]

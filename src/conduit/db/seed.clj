@@ -5,9 +5,15 @@
 
 ;; Seed Data
 (defn seed-user [conn]
-  (d/transact conn [{:user/username "john.doe" :user/email "john.doe@gmail.com"};;
-                    {:user/username "jane.doe" :user/email "jane.doe@gmail.com"}
-                    {:user/username "mike.fro" :user/email "mike@gmail.com"}]));;
+  (d/transact conn [{:user/username "john.doe"
+                     :user/id (u/uuid)
+                     :user/email "john.doe@gmail.com"};;
+                    {:user/username "jane.doe"
+                     :user/id (u/uuid)
+                     :user/email "jane.doe@gmail.com"}
+                    {:user/username "mike.fro"
+                     :user/id (u/uuid)
+                     :user/email "mike@gmail.com"}]));;
 
 
 (defn seed-articles [conn]
