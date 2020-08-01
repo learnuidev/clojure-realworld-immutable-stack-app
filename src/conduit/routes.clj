@@ -16,8 +16,7 @@
 (defn response [_req]
   (response/ok {:response "TODO"}))
 
-(def routes [["/api"
-              {:middleware [wrap-formats]}
+(def routes [["/api" {:middleware [wrap-formats]}
               [""
                ["/users/login"    {:post response}]
                ["/users/register" {:post response}]

@@ -12,8 +12,10 @@
                            [metosin/muuntaja "0.6.7"]
                            [metosin/reitit "0.5.5"]
                            [metosin/ring-http-response "0.9.1"]
-                           ;; Template system
-                           [selmer "1.12.28"]]
+                           ;; Security Lib
+                           [buddy "2.0.0"]
+                           ;; Validation lib
+                           [funcool/struct "1.4.0"]]
             :main ^:skip-aot conduit.core
             :target-path "target/%s"
             :profiles {:uberjar {:aot :all}})
