@@ -1,6 +1,6 @@
 (ns conduit.routes
   (:require [ring.util.http-response :as response]
-            [conduit.middlewares :refer [wrap-formats wrap-authorization]]
+            [conduit.middlewares :refer [wrap-formats wrap-authorization wrap-auth]]
             [reitit.ring :as reitit]
             [conduit.handler :as handler]))
 
@@ -35,7 +35,8 @@
                                             :post {:middleware [wrap-authorization]
                                                    :handler response}}]
                ["/tags" {:get response}]]
-              ["" {:middleware [wrap-authorization]}
+              ["" {:middleware [wrap-auth
+                                wrap-authorization]}
                ["/user" {:get response :put response}]
                ["/profiles/:username/follow" {:post response :delete response}]
                ["/article/feed" {:get response}]

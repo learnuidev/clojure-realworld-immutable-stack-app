@@ -1,5 +1,8 @@
 (ns conduit.middlewares
   (:require [muuntaja.middleware :refer [wrap-format]]
+            [ring.util.http-response :as response]
+            [conduit.db.user :as user]
+            [conduit.db.core :refer [conn]]
             [clojure.string :as str]))
 
 (defn create-access-control-header [origin]
@@ -17,13 +20,19 @@
           response (handler req)]
       (assoc response :headers (merge (:headers response) (create-access-control-header origin))))))
 
-;;
+(defn wrap-auth [handler]
+  (fn [{{:strs [authorization]} :headers :as req}]
+    (let [token (when authorization (-> (str/split authorization #" ") last))]
+      (if-let [user (user/fetch-by-token conn token '[*])]
+        (handler (assoc req :auth user))
+        (handler req)))))
+
 (defn wrap-authorization [handler]
   (fn [req]
-    (if (:auth-user req)
+    (println "AUTH_USER" (:auth req))
+    (if (:auth req)
       (handler req)
-      {:status 401
-       :body   {:errors {:authorization "Authorization required."}}})))
+      (response/unauthorized {:message "Authorization required."}))))
 
 (defn wrap-formats [handler]
   (-> handler

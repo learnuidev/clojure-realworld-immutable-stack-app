@@ -13,6 +13,20 @@
 #_(browse conn '[*])
 ;; ===
 
+
+(defn fetch-by-token
+  "Fetch a single user by token"
+  [conn token pattern]
+  (d/q '[:find (pull ?uid pattern) .
+         :in $ pattern ?token
+         :where [?uid :user/token ?token]]
+       @conn pattern token))
+#_(fetch-by-token conn "john.doe" '[*])
+
+; (fetch-by-token conn
+;                 "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiam9leS5zY2htb2VAZ21haWwuY29tIiwiZXhwIjoxNTk2ODk3MTAwfQ.1fIfVXg1xGTsmeWpBR_kr1R0lotZEWJLyzylUTNbFrc"
+;                 '[*])
+
 (defn fetch-by-username
   "Fetch a single user by username"
   [conn username pattern]
