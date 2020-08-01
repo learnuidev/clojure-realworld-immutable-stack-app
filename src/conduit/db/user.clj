@@ -112,3 +112,11 @@
   [email article-id]
   (d/transact conn {:tx-data [[:db/retract [:user/email email] :user/favourites [:article/id (u/string->uuid article-id)]]]}))
 #_(unfavourite! "john.doe@gmail.com" "574ae17e-676f-4822-a902-937f8a6841c4")
+
+;; ===
+(defn visible-user [{:user/keys [username email token bio image]}]
+  {:user {:username username
+          :email email
+          :bio bio
+          :image image
+          :token token}})
