@@ -12,13 +12,36 @@
 ;               [?aid :article/title ?title]]
 ;     hist (u/string->uuid "3eaead6b-d2a9-4483-89cd-d28f14eacf5a"))
 
+;;
 (defn browse
   "Browse List of articles"
-  [conn pattern]
-  (d/q '[:find [(pull ?aid pattern) ...]
-         :in $ pattern
-         :where [?aid :article/title ?title]]
-       @conn pattern))
+  [conn]
+  (->> (d/q '[:find ?tx ?id ?title ?description ?email ?username
+              :in $
+              :where
+              [?aid :article/title ?title ?tx]
+              [?aid :article/id ?id]
+              [?aid :article/description ?description ?tx]
+              [?aid :article/author ?uid]
+              [?uid :user/email ?email]
+              [?uid :user/username ?username]]
+            @conn)
+       (sort-by first #(compare %2 %1))
+       (map (fn [[tx id title description email username]]
+              {:article/last-updated tx
+               :article/id id
+               :article/title title
+               :article/description description
+               :article/author {:user/email email
+                                :user/username username}}))))
+
+; (defn browse
+;   "Browse List of articles"
+;   [conn pattern]
+;   (d/q '[:find [(pull ?aid pattern) ...]
+;          :in $ pattern
+;          :where [?aid :article/title ?title]]
+;        @conn pattern))
 #_(browse conn '[*])
 ;; ===
 
@@ -64,7 +87,7 @@
                        :article/id id
                        :article/description description
                        :article/author [:user/email author]}])
-    (fetch id '[*])))
+    (fetch id '[* {:article/author [:user/email :user/username]}])))
 #_(add! {:author "jane.doe@gmail.com"
          :title "Programming Clojure"
          :description "Learn how to program in Clojure"})

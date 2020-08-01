@@ -23,7 +23,9 @@
 (defn wrap-auth [handler]
   (fn [{{:strs [authorization]} :headers :as req}]
     (let [token (when authorization (-> (str/split authorization #" ") last))]
-      (if-let [user (user/fetch-by-token conn token '[*])]
+      (if-let [user (user/fetch-by-token conn token '[:user/username
+                                                      :user/email
+                                                      :user/token])]
         (handler (assoc req :auth user))
         (handler req)))))
 

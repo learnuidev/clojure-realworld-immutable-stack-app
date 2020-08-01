@@ -2,7 +2,15 @@
   (:require [ring.util.http-response :as response]
             [conduit.db.core :refer [conn]]
             [conduit.db.user :as user]
+            [conduit.db.article :as article]
             [conduit.utils :as utils]))
+;;
+(defn post-handler [req]
+  (response/ok
+   {:result {:id (get-in req [:body-params :id])
+             :name (get-in req [:body-params :name])
+             :age (get-in req [:body-params :age])
+             :city (get-in req [:body-params :city])}}))
 
 ;; Auth
 (defn login [{{:keys [username password]} :body-params}]
@@ -24,3 +32,19 @@
                                        :token (utils/generate-token email)
                                        :hash (utils/encrypt-password password)})]
         (response/ok {:message "Registration successful! Please login in"})))))
+
+;; Articles - BROWSE
+(defn articles-browse [_req]
+  (let [articles (article/browse conn)]
+        ; articles (article/browse conn '[:article/title
+        ;                                 :article/description
+        ;                                 :article/id
+        ;                                 {:article/author [:user/username :user/email]}])]
+    (response/ok {:articles articles})))
+
+(defn articles-add! [{{:user/keys [email]} :auth
+                      {:keys [title description]} :body-params}]
+  (let [new-article (article/add! {:title title
+                                   :description description
+                                   :author email})]
+    (response/ok {:article new-article})))

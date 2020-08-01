@@ -23,9 +23,10 @@
                ["/login"    {:post handler/login}]
                ["/register" {:post handler/register}]
                ["/profiles/:username" {:get response}]
-               ["/articles" {:get response
-                             :post {:middleware [wrap-authorization]
-                                    :handler response}}]
+               ["/articles" {:get handler/articles-browse
+                             :post {:middleware [wrap-auth
+                                                 wrap-authorization]
+                                    :handler handler/articles-add!}}]
                ["/articles/:slug" {:get response
                                    :put {:middleware [wrap-authorization]
                                          :handler response}
