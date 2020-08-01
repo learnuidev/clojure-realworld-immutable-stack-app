@@ -53,10 +53,11 @@
 
 (defn add!
   "Add a new user"
-  [conn {:keys [username email hash]}]
+  [conn {:keys [username email hash token]}]
   (d/transact conn [{:user/username username
                      :user/email email
-                     :user/hash hash}]))
+                     :user/hash hash
+                     :user/token token}]))
 #_(add! "jane" "jane.doe@gmail.com")
 ;; ===
 

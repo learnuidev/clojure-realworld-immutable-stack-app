@@ -18,11 +18,11 @@
             {:db/ident :user/hash
              :db/valueType :db.type/string
              :db/cardinality :db.cardinality/one
-             :db/doc "JWT token of the user"}
-            {:db/ident :user/salt
+             :db/doc "Hashed password"}
+            {:db/ident :user/token
              :db/valueType :db.type/string
              :db/cardinality :db.cardinality/one
-             :db/doc "Random data to safeguard Users password"}
+             :db/doc "JWT token"}
             {:db/ident :user/image
              :db/valueType :db.type/string
              :db/cardinality :db.cardinality/one

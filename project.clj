@@ -15,7 +15,9 @@
                            ;; Security Lib
                            [buddy "2.0.0"]
                            ;; Validation lib
-                           [funcool/struct "1.4.0"]]
+                           [funcool/struct "1.4.0"]
+                           ;; Time Lib
+                           [clj-time "0.15.2"]]
             :main ^:skip-aot conduit.core
             :target-path "target/%s"
             :profiles {:uberjar {:aot :all}})
