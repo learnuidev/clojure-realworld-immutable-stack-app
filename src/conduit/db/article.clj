@@ -65,23 +65,22 @@
 
 (defn fetch-by-user
   "Fetch a single article belonging to a user"
-  [aid email]
-  (d/q '[:find (pull ?a [*]) .
+  [conn aid email]
+  (d/q '[:find (pull ?a [* {:article/author [:user/email]}]) .
          :in $ ?aid ?email
          :where [?a :article/id ?aid]
          [?a :article/author ?author]
          [?author :user/email ?email]]
        @conn (u/string->uuid aid) email))
-#_(fetch-by-user "3eaead6b-d2a9-4483-89cd-d28f14eacf5a" "john.doe@gmail.com")
+#_(fetch-by-user conn "3eaead6b-d2a9-4483-89cd-d28f14eacf5a" "john.doe@gmail.com")
 ;; ===
 
 (defn edit!
   "Edit a article"
-  [conn {:keys [aid email params]}]
-  (when (fetch-by-user aid email)
-    (let [input (merge {:article/id (u/string->uuid aid)} params)
-          _ (d/transact conn [input])]
-      (fetch conn aid '[*]))))
+  [conn {:keys [aid params]}]
+  (let [input (merge {:article/id (u/string->uuid aid)} params)
+        _   (d/transact conn [input])]
+    (fetch conn aid '[*])))
 #_(edit! {:aid "3eaead6b-d2a9-4483-89cd-d28f14eacf5a"
           :email "john.doe@gmail.com"
           :params {:article/title "How not to fly a dragon"}})
@@ -89,7 +88,8 @@
 
 (defn add!
   "Add a new article"
-  [{:keys [title description author]}]
+  [conn {:keys [title description author]}]
+  (println "AUTHOR " author)
   (let [id (u/uuid)]
     (d/transact conn [{:article/title title
                        :article/id id
@@ -103,13 +103,13 @@
 
 (defn delete!
   "Delete an article by ID"
-  [aid]
+  [conn aid]
   (when-let [article (fetch conn aid '[*])]
     (d/transact conn {:tx-data [[:db/retractEntity [:article/id (u/string->uuid aid)]]]})
     article))
 ;; ===
 
-(defn articles-by-user [email pattern]
+(defn articles-by-user [conn email pattern]
   (d/q '[:find [(pull ?a pattern) ...]
          :in $ pattern ?email
          :where

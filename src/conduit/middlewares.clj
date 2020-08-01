@@ -31,7 +31,6 @@
 
 (defn wrap-authorization [handler]
   (fn [req]
-    (println "AUTH_USER" (:auth req))
     (if (:auth req)
       (handler req)
       (response/unauthorized {:message "Authorization required."}))))

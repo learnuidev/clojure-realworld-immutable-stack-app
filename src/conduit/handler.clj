@@ -57,11 +57,41 @@
       (response/not-found {:message "Article not found! Please try another link"}))))
 
 ;; ARTICLE EDIT
+(defn articles-edit! [{{:keys [id]} :path-params
+                       params :body-params
+                       {:user/keys [email]} :auth}]
+  (try
+    (let [article (article/fetch conn id '[* {:article/author [:user/email]}])]
+      (if (seq article)
+        (let [{user :article/author} article]
+          (if (= (:user/email user) email)
+            (let [updated-article (article/edit! conn {:aid id :params params})]
+              (response/ok {:article updated-article}))
+            (response/forbidden {:message "You are not authorized to edit this article"})))
+        (response/not-found {:message "Article not found"})))
+    (catch Exception e
+      (response/bad-request {:message "Something went wrong! Please try again"}))))
+
+(article/fetch conn "69bc2062-9b0c-4a63-8308-3220380393a2" '[*])
 
 ;; ADD
 (defn articles-add! [{{:user/keys [email]} :auth
                       {:keys [title description]} :body-params}]
-  (let [new-article (article/add! {:title title
-                                   :description description
-                                   :author email})]
+  (let [new-article (article/add! conn {:title title
+                                        :description description
+                                        :author email})]
     (response/ok {:article new-article})))
+
+;; DELETE
+(defn articles-delete! [{{:keys [id]} :path-params
+                         {:user/keys [email]} :auth}]
+  (try
+    (let [article (article/fetch conn id '[{:article/author [:user/email]}])]
+      (if (seq article)
+        (if-let [is-author? (= email (-> article :article/author :user/email))]
+          (let [deleted-article (article/delete! conn id)]
+            (response/ok {:article deleted-article}))
+          (response/unauthorized {:message "You are not authorized to delete this article"}))
+        (response/not-found {:message "Article not found"})))
+    (catch Exception e
+      (response/bad-request {:message "Something went wrong! Please try again"}))))
