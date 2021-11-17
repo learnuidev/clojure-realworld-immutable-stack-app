@@ -14,3 +14,6 @@
    (-> #'app wrap-reload logger/wrap-with-logger wrap-cors)
    {:port 3000
     :join? false}))
+
+(comment
+  (-main))

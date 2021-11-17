@@ -5,7 +5,7 @@
             [conduit.db.article :as article]
             [conduit.db.comment :as comment]
             [conduit.utils :as utils]))
-;;
+
 (defn post-handler [req]
   (response/ok
    {:result {:id (get-in req [:body-params :id])
@@ -13,7 +13,6 @@
              :age (get-in req [:body-params :age])
              :city (get-in req [:body-params :city])}}))
 
-;; Auth
 (defn login [{{:keys [username password]} :body-params}]
   (if-let [user (user/fetch conn {:email username :username username} '[*])]
     (if (utils/check-password password (:user/hash user))
@@ -47,7 +46,6 @@
         articles (if index (article/browse conn index) (article/browse conn))]
     (response/ok {:articles articles})))
 
-;; READ
 (defn articles-read [{{:keys [id]} :path-params}]
   (try
     (let [article (article/fetch conn id '[* {:article/author [:user/username
@@ -57,7 +55,6 @@
     (catch Exception e
       (response/not-found {:message "Article not found! Please try another link"}))))
 
-;; ARTICLE EDIT
 (defn articles-edit! [{{:keys [id]} :path-params
                        params :body-params
                        {:user/keys [email]} :auth}]
@@ -73,9 +70,6 @@
     (catch Exception e
       (response/bad-request {:message "Something went wrong! Please try again"}))))
 
-(article/fetch conn "69bc2062-9b0c-4a63-8308-3220380393a2" '[*])
-
-;; ADD
 (defn articles-add! [{{:user/keys [email]} :auth
                       {:keys [title description]} :body-params}]
   (let [new-article (article/add! conn {:title title
@@ -83,7 +77,6 @@
                                         :author email})]
     (response/ok {:article new-article})))
 
-;; DELETE
 (defn articles-delete! [{{:keys [id]} :path-params
                          {:user/keys [email]} :auth}]
   (try

@@ -9,7 +9,7 @@
   (let [allowed-origins "http://localhost:8080"
         origins        (str/split allowed-origins #",")
         allowed-origin (some #{origin} origins)]
-    {"Access-Control-Allow-Origin"  allowed-origin
+    {"Access-Control-Allow-Origin"  "*"
      "Access-Control-Allow-Methods" "POST, GET, PUT, OPTIONS, DELETE"
      "Access-Control-Max-Age"       "3600"
      "Access-Control-Allow-Headers" "Authorization, Content-Type, x-requested-with"}))
