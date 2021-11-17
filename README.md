@@ -1,44 +1,47 @@
-# conduit
+# RealWorld Example App
 
-FIXME: description
+> ### Datahike + Clojure codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 
-## Installation
+This codebase was created to demonstrate a fully fledged fullstack application built with **Datahike**, **Postgres** and **Reitit** including CRUD operations, authentication, routing, pagination, and more.
 
-Download from http://example.com/FIXME.
+We've gone to great lengths to adhere to the **Clojure** community styleguides & best practices.
 
-## Usage
+For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
-FIXME: explanation
+# Getting started
 
-    $ java -jar conduit-0.1.0-standalone.jar [args]
+Clone the repository
 
-## Options
+```bash
+https://github.com/learnuidev/clojure-realworld-immutable-stack-app.git
+```
 
-FIXME: listing of options this app accepts.
+Install dependencies
 
-## Examples
+```bash
+lein
+```
 
-...
+Start the repl
 
-### Bugs
+```bash
+lein repl
+```
 
-...
+Connect to repl using your favourite text editor
 
-### Any Other Sections
-### That You Think
-### Might be Useful
+Start the app from `env/dev/user.clj` namespace by calling the `start!` function
 
-## License
+Run tests
 
-Copyright © 2020 FIXME
+```bash
+lein test
+```
 
-This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
+## API Specification
 
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
+This application adheres to the api specifications set by the [Thinkster](https://github.com/gothinkster) team. This helps mix and match any backend with any other frontend without conflicts.
+
+> [Full API Spec](https://github.com/gothinkster/realworld/tree/master/api)
+
+More information regarding the project can be found here https://github.com/gothinkster/realworld
