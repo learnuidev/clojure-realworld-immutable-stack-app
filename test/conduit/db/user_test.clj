@@ -26,12 +26,12 @@
             new-user (user/edit! conn "john.doe@gmail.com" params)]
         (is (= (:user/email new-user) (:user/email test-user)))
         (is (= (:user/username new-user) "johnny.doe"))))))
-
+;
 (deftest user-add
   (let [conn (fixture-conn)
         _  (fixture-data conn)]
     (testing "add!"
-      (let [new-user {:username "jane.doe" :email "jane@gmail.com" :hash "1234"}
+      (let [new-user {:username "jane.doe" :email "jane@gmail.com" :hash "1234" :token "abcd"}
             _ (user/add! conn new-user)]
         (is (= (count (user/browse conn '[*])) 2))))))
 
