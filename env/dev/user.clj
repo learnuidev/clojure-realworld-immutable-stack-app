@@ -10,6 +10,9 @@
 (defn start! []
   (mount/start))
 
+(comment
+  (start!))
+
 (defn stop! []
   (mount/stop))
 

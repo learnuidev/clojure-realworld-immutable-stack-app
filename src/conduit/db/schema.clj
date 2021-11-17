@@ -6,6 +6,11 @@
              :db/unique :db.unique/identity
              :db/cardinality :db.cardinality/one
              :db/doc "Users username"}
+            {:db/ident :user/id
+             :db/valueType :db.type/uuid
+             :db/unique :db.unique/identity
+             :db/cardinality :db.cardinality/one
+             :db/doc "Users ID"}
             {:db/ident :user/email
              :db/valueType :db.type/string
              :db/unique :db.unique/identity
@@ -18,11 +23,11 @@
             {:db/ident :user/hash
              :db/valueType :db.type/string
              :db/cardinality :db.cardinality/one
-             :db/doc "JWT token of the user"}
-            {:db/ident :user/salt
+             :db/doc "Hashed password"}
+            {:db/ident :user/token
              :db/valueType :db.type/string
              :db/cardinality :db.cardinality/one
-             :db/doc "Random data to safeguard Users password"}
+             :db/doc "JWT token"}
             {:db/ident :user/image
              :db/valueType :db.type/string
              :db/cardinality :db.cardinality/one
